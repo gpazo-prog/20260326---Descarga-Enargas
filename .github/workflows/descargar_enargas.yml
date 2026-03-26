@@ -1,0 +1,43 @@
+name: Descargar ENARGAS XLS
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 9 * * *"   # 09:00 UTC
+
+jobs:
+  descargar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      ENARGAS_PERIODO: "2026"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Configurar Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Instalar Chromium y dependencias del sistema
+        run: |
+          python -m playwright install chromium --with-deps
+
+      - name: Ejecutar script
+        run: python descargar_enargas_github.py
+
+      - name: Subir artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: enargas-xls-${{ github.run_number }}
+          path: artifacts/
+          retention-days: 30
