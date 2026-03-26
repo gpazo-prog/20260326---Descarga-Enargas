@@ -3,7 +3,7 @@ name: Descargar ENARGAS XLS
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 9 * * *"   # 09:00 UTC
+    - cron: "0 9 * * *"
 
 jobs:
   descargar:
@@ -12,6 +12,7 @@ jobs:
 
     env:
       ENARGAS_PERIODO: "2026"
+      HEADLESS: "true"
 
     steps:
       - name: Checkout
@@ -27,7 +28,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Instalar Chromium y dependencias del sistema
+      - name: Instalar Chromium y dependencias
         run: |
           python -m playwright install chromium --with-deps
 
